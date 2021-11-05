@@ -13,9 +13,9 @@ app.use(express.json());
 async function getWorkshopItems(ids) {
   const params = new URLSearchParams();
   params.append('itemcount', ids.length + '');
-  ids.forEach((id, i) => {
-      params.append(`publishedfileids[${i}]`, id + '');
-  });
+  for (const i in ids) {
+    params.append(`publishedfileids[${i}]`, ids[i] + '');
+  }
   const response = await axios.post(
       'https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/',
       params,
