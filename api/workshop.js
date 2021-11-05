@@ -10,7 +10,13 @@ const tmpFolder = path.resolve(__dirname, 'tmp');
 const app = express();
 app.use(express.json());
 
-async function getWorkshopItems(ids) {
+async function getWorkshopItems(wsIds) {
+  let ids = [];
+  if (Array.isArray(wsIds)) {
+    ids = wsIds;
+  } else {
+    ids = [wsIds];
+  }
   const params = new URLSearchParams();
   params.append('itemcount', ids.length + '');
   for (const i in ids) {
