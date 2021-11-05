@@ -38,10 +38,10 @@
         <v-divider class="py-4"></v-divider>
         <div class="d-flex flex-row-reverse">
           <v-btn
-            @click="download"
+            @click="downloadZip"
             color="primary"
             :disabled="items.length === 0"
-            >Download Maps</v-btn
+            >Download ZIP</v-btn
           >
         </div>
       </v-card-text>
@@ -83,7 +83,7 @@ export default {
         },
       ],
       items: [],
-      text: " 685184665",
+      text: "421596934 ",
       error: false,
     };
   },
@@ -144,17 +144,30 @@ export default {
       for (const item of res) {
         this.items.push(item);
       }
-      console.log(res);
+      console.log(`Loaded ${this.items.length} workshop items`);
     },
     async downloadMap(workshop) {
-      console.log(workshop);
       const data = await this.$axios.$post(
         "/api/workshop/downloadmap",
-        workshop
+        workshop,
+        {
+          responseType: "blob",
+        }
       );
-      triggerFileDownload(workshop.name, data);
+      const filename = workshop.filename.substring(
+        workshop.filename.lastIndexOf("/") + 1
+      );
+      console.log(`Downloading [${workshop.publishedfileid}] ${filename}`);
+      triggerFileDownload(filename, data);
     },
-    async download() {},
+    async downloadZip() {
+      const url = "/api/workshop/createzip";
+      const params = new URLSearchParams();
+      for (const item of this.items) {
+        params.append("id", item.publishedfileid);
+      }
+      window.open(`${url}?${params.toString()}`, "_blank").focus();
+    },
   },
 };
 </script>
